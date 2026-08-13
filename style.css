@@ -1,0 +1,249 @@
+/* 직지 프로젝트 SF - 카테고리 풀페이지 뷰
+   앱의 CSS 변수(--app-bg-main, --app-accent 등)를 그대로 활용해
+   라이트노벨 서재 그리드와 톤을 맞춥니다. 클래스명은 코어 book-card와
+   충돌/오작동(컨텍스트 메뉴 위임 클릭 등)을 피하기 위해 jf- 접두사로 분리했습니다. */
+
+.jf-wrap {
+  padding: 20px 24px 32px;
+  color: var(--app-text-primary, #f8fafc);
+}
+
+.jf-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.jf-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.jf-title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background: rgba(168, 85, 247, 0.18);
+  color: var(--app-accent, #a855f7);
+  font-size: 0.95rem;
+}
+
+.jf-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--app-text-primary, #f8fafc);
+}
+
+.jf-count {
+  color: var(--app-text-muted, #94a3b8);
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.jf-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.jf-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.1));
+  background: var(--app-bg-card, rgba(30, 41, 59, 0.6));
+  color: var(--app-text-secondary, #cbd5e1);
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.jf-pill-btn:hover {
+  border-color: var(--app-accent, #a855f7);
+  color: var(--app-text-primary, #f8fafc);
+  background: var(--app-bg-card-hover, rgba(30, 41, 59, 0.85));
+}
+
+.jf-searchbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--app-input-bg, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.1));
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 20px;
+}
+
+.jf-search-icon {
+  color: var(--app-text-muted, #94a3b8);
+  font-size: 0.9rem;
+}
+
+.jf-search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--app-text-primary, #f8fafc);
+  font-size: 0.92rem;
+}
+
+.jf-search-input::placeholder {
+  color: var(--app-text-muted, #94a3b8);
+}
+
+.jf-search-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 16px;
+  background: var(--app-accent, #a855f7);
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.jf-search-btn:hover {
+  background: var(--app-accent-hover, #c084fc);
+}
+
+.jf-status {
+  padding: 40px 0;
+  text-align: center;
+  color: var(--app-text-muted, #94a3b8);
+  font-size: 0.95rem;
+}
+
+.jf-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1.5rem;
+}
+
+.jf-card {
+  background: var(--app-bg-card, rgba(30, 41, 59, 0.85));
+  border: 1px solid var(--app-border-light, rgba(255, 255, 255, 0.05));
+  border-radius: 10px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.jf-card:hover {
+  transform: translate3d(0, -6px, 0);
+  border-color: var(--app-accent, #a855f7);
+  box-shadow: 0 10px 20px rgba(168, 85, 247, 0.2);
+}
+
+.jf-cover {
+  height: 220px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 14px;
+}
+
+.jf-cover-glyph {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.92);
+  line-height: 1.3;
+  word-break: keep-all;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+.jf-cover-icon {
+  position: absolute;
+  bottom: 8px;
+  right: 10px;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.jf-badge-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(15, 23, 42, 0.95);
+  color: #e9d5ff;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  border-radius: 4px;
+  border: 1px solid rgba(168, 85, 247, 0.4);
+}
+
+.jf-format-badges {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  gap: 4px;
+}
+
+.jf-format-chip {
+  background: rgba(15, 23, 42, 0.85);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.62rem;
+  font-weight: 700;
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.jf-info {
+  padding: 0.75rem 0.75rem 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  background: rgba(15, 23, 42, 0.4);
+  flex-grow: 1;
+}
+
+.jf-info-title {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--app-text-primary, #f1f5f9);
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  word-break: break-all;
+}
+
+.jf-info-author {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--app-text-muted, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.jf-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px 0;
+  color: var(--app-text-muted, #94a3b8);
+}
