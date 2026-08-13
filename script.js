@@ -31,9 +31,17 @@
     return GRADIENTS[idx];
   }
 
-  function extractCatalogNo(publisher) {
-    const m = /No\.(\d+)/.exec(publisher || '');
-    return m ? parseInt(m[1], 10) : Number.MAX_SAFE_INTEGER;
+  function extractCatalogCode(publisher) {
+    const m = /No\.([A-Za-z0-9]+)/.exec(publisher || '');
+    return m ? m[1] : '';
+  }
+
+  // 정렬용 숫자 키: "e01" 같은 특별판 코드는 숫자 목록 뒤로 보냅니다.
+  function catalogSortKey(code) {
+    if (!code) return Number.MAX_SAFE_INTEGER;
+    const digits = code.replace(/\D/g, '');
+    const n = digits ? parseInt(digits, 10) : Number.MAX_SAFE_INTEGER;
+    return /^[A-Za-z]/.test(code) ? n + 1000 : n;
   }
 
   let allItems = [];
@@ -70,15 +78,38 @@
       const cover = el('div', 'jf-cover');
       cover.style.background = `linear-gradient(160deg, ${c1}, ${c2})`;
 
+      // 카드 표지 영역이 커서(220px) 큰 버전을 우선 시도하고, 실패하면
+      // 작은 썸네일 -> 그라디언트+글자 placeholder 순서로 대체합니다.
       const glyph = el('div', 'jf-cover-glyph', (item.title || '?').trim().slice(0, 1));
-      cover.appendChild(glyph);
-
       const rocketIcon = el('i', 'jf-cover-icon fa-solid fa-rocket');
-      cover.appendChild(rocketIcon);
+      const primarySrc = item.cover_large || item.cover;
+      const fallbackSrc = item.cover_large ? item.cover : '';
 
-      const catalogNo = extractCatalogNo(item.publisher);
-      if (catalogNo !== Number.MAX_SAFE_INTEGER) {
-        const badge = el('span', 'jf-badge-count', `No.${String(catalogNo).padStart(2, '0')}`);
+      if (primarySrc) {
+        const img = el('img', 'jf-cover-img');
+        img.src = primarySrc;
+        img.alt = item.title || '';
+        img.loading = 'lazy';
+        let triedFallback = false;
+        img.addEventListener('error', () => {
+          if (!triedFallback && fallbackSrc) {
+            triedFallback = true;
+            img.src = fallbackSrc;
+            return;
+          }
+          img.remove();
+          cover.appendChild(glyph);
+          cover.appendChild(rocketIcon);
+        });
+        cover.appendChild(img);
+      } else {
+        cover.appendChild(glyph);
+        cover.appendChild(rocketIcon);
+      }
+
+      const catalogCode = item.catalog_code || extractCatalogCode(item.publisher);
+      if (catalogCode) {
+        const badge = el('span', 'jf-badge-count', `No.${catalogCode}`);
         cover.appendChild(badge);
       }
 
@@ -115,7 +146,11 @@
 
     items = items.slice();
     if (sortMode === 'number') {
-      items.sort((a, b) => extractCatalogNo(a.publisher) - extractCatalogNo(b.publisher));
+      items.sort((a, b) => {
+        const codeA = a.catalog_code || extractCatalogCode(a.publisher);
+        const codeB = b.catalog_code || extractCatalogCode(b.publisher);
+        return catalogSortKey(codeA) - catalogSortKey(codeB);
+      });
     } else {
       items.sort((a, b) => (a.title || '').localeCompare(b.title || '', 'ko'));
     }

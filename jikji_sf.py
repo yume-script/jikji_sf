@@ -19,7 +19,12 @@ from plugins.metadata.base import BaseMetadataProvider
 LISTVIEW_URL = "https://sf.jikji.org/book/listview.html"
 BASE_URL = "https://sf.jikji.org/book/"
 
-# 부가 링크: 사이트 자체가 접근 불가/느릴 때를 대비한 기본 커버 이미지
+# 표지 이미지: 목록/그리드용 작은 버전과, 상세보기용 큰 버전 두 가지가 있습니다
+# (사용자가 실제 페이지에서 확인: /book/cover/01s.jpg = 작게, /book/cover/01.jpg = 크게)
+COVER_URL_TMPL = "https://sf.jikji.org/book/cover/{code}s.jpg"
+COVER_LARGE_URL_TMPL = "https://sf.jikji.org/book/cover/{code}.jpg"
+
+# 커버 이미지를 못 찾을 때(사이트 접속 실패 등)를 대비한 대체 이미지
 DEFAULT_COVER = (
     "https://images.unsplash.com/photo-1543002588-bfa74002ed7e"
     "?w=200&auto=format&fit=crop&q=60"
@@ -29,7 +34,8 @@ TITLE_HREF_RE = re.compile(r"^b\d+\.html$", re.IGNORECASE)
 AUTHOR_HREF_RE = re.compile(r"^a\d+\.html$", re.IGNORECASE)
 PDF_HREF_RE = re.compile(r"pdf/.*\.pdf$", re.IGNORECASE)
 HWP_HREF_RE = re.compile(r"hwp/.*\.hwp$", re.IGNORECASE)
-NUMBER_RE = re.compile(r"\[(\d+)\]")
+# pdf/hwp 파일명에서 카탈로그 코드 추출 (예: pdf/01.pdf -> "01", pdf/e01.pdf -> "e01")
+CATALOG_CODE_RE = re.compile(r"([A-Za-z0-9]+)\.(?:pdf|hwp)$", re.IGNORECASE)
 ENGLISH_TITLE_RE = re.compile(r"\(([^)]+)\)")
 
 
@@ -125,13 +131,12 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             if not detail_href or detail_href in seen_links:
                 continue
 
-            # 제목 셀 전체 텍스트에서 [번호]와 (영문 원제)를 함께 추출합니다.
+            # 제목 셀 전체 텍스트에서 (영문 원제)를 추출합니다.
             # (title_a는 보통 <b><a>...</a></b> 형태라 부모의 부모인 <td>까지 올라가야 함)
             title_td = title_a.find_parent("td") or title_a.parent
             cell_text = title_td.get_text(" ", strip=True) if title_td else title_a.get_text(strip=True)
             kor_title = title_a.get_text(strip=True)
 
-            number_match = NUMBER_RE.search(cell_text)
             eng_match = ENGLISH_TITLE_RE.search(cell_text)
             eng_title = eng_match.group(1).strip() if eng_match else ""
 
@@ -143,9 +148,18 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             hwp_a = row.find("a", href=HWP_HREF_RE)
             author_a = row.find("a", href=AUTHOR_HREF_RE)
 
-            pdf_url = BASE_URL + pdf_a["href"].strip() if pdf_a and pdf_a.get("href") else ""
-            hwp_url = BASE_URL + hwp_a["href"].strip() if hwp_a and hwp_a.get("href") else ""
+            pdf_href = pdf_a["href"].strip() if pdf_a and pdf_a.get("href") else ""
+            hwp_href = hwp_a["href"].strip() if hwp_a and hwp_a.get("href") else ""
+            pdf_url = BASE_URL + pdf_href if pdf_href else ""
+            hwp_url = BASE_URL + hwp_href if hwp_href else ""
             detail_url = BASE_URL + detail_href
+
+            # 카탈로그 코드(01, 40, e01 등)는 pdf/hwp 파일명에서 추출합니다.
+            # (목록 페이지의 [번호] 표기가 없는 항목도 있어 이 방식이 더 안정적입니다.)
+            code_match = CATALOG_CODE_RE.search(pdf_href) or CATALOG_CODE_RE.search(hwp_href)
+            catalog_code = code_match.group(1) if code_match else ""
+            cover_url = COVER_URL_TMPL.format(code=catalog_code) if catalog_code else DEFAULT_COVER
+            cover_large_url = COVER_LARGE_URL_TMPL.format(code=catalog_code) if catalog_code else ""
 
             author_name = author_a.get_text(strip=True) if author_a else "저자 미상"
 
@@ -153,8 +167,8 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             link = pdf_url or detail_url
 
             publisher_bits = []
-            if number_match:
-                publisher_bits.append(f"No.{number_match.group(1)}")
+            if catalog_code:
+                publisher_bits.append(f"No.{catalog_code}")
             if hwp_url:
                 publisher_bits.append("HWP 있음")
             publisher = " · ".join(publisher_bits) if publisher_bits else "직지 프로젝트"
@@ -165,8 +179,10 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
                     "author": author_name,
                     "publisher": publisher,
                     "pubDate": "",
-                    "cover": DEFAULT_COVER,
+                    "cover": cover_url,
+                    "cover_large": cover_large_url,
                     "link": link,
+                    "catalog_code": catalog_code,
                     "description": f"상세 페이지: {detail_url}",
                 }
             )
