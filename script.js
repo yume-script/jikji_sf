@@ -115,9 +115,6 @@
 
       const formatWrap = el('div', 'jf-format-badges');
       formatWrap.appendChild(el('span', 'jf-format-chip', 'PDF'));
-      if ((item.publisher || '').includes('HWP')) {
-        formatWrap.appendChild(el('span', 'jf-format-chip', 'HWP'));
-      }
       cover.appendChild(formatWrap);
 
       card.appendChild(cover);

@@ -33,9 +33,8 @@ DEFAULT_COVER = (
 TITLE_HREF_RE = re.compile(r"^b\d+\.html$", re.IGNORECASE)
 AUTHOR_HREF_RE = re.compile(r"^a\d+\.html$", re.IGNORECASE)
 PDF_HREF_RE = re.compile(r"pdf/.*\.pdf$", re.IGNORECASE)
-HWP_HREF_RE = re.compile(r"hwp/.*\.hwp$", re.IGNORECASE)
-# pdf/hwp 파일명에서 카탈로그 코드 추출 (예: pdf/01.pdf -> "01", pdf/e01.pdf -> "e01")
-CATALOG_CODE_RE = re.compile(r"([A-Za-z0-9]+)\.(?:pdf|hwp)$", re.IGNORECASE)
+# pdf 파일명에서 카탈로그 코드 추출 (예: pdf/01.pdf -> "01", pdf/e01.pdf -> "e01")
+CATALOG_CODE_RE = re.compile(r"([A-Za-z0-9]+)\.pdf$", re.IGNORECASE)
 ENGLISH_TITLE_RE = re.compile(r"\(([^)]+)\)")
 
 
@@ -145,18 +144,15 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
                 display_title = f"{kor_title} ({eng_title})"
 
             pdf_a = row.find("a", href=PDF_HREF_RE)
-            hwp_a = row.find("a", href=HWP_HREF_RE)
             author_a = row.find("a", href=AUTHOR_HREF_RE)
 
             pdf_href = pdf_a["href"].strip() if pdf_a and pdf_a.get("href") else ""
-            hwp_href = hwp_a["href"].strip() if hwp_a and hwp_a.get("href") else ""
             pdf_url = BASE_URL + pdf_href if pdf_href else ""
-            hwp_url = BASE_URL + hwp_href if hwp_href else ""
             detail_url = BASE_URL + detail_href
 
-            # 카탈로그 코드(01, 40, e01 등)는 pdf/hwp 파일명에서 추출합니다.
+            # 카탈로그 코드(01, 40, e01 등)는 pdf 파일명에서 추출합니다.
             # (목록 페이지의 [번호] 표기가 없는 항목도 있어 이 방식이 더 안정적입니다.)
-            code_match = CATALOG_CODE_RE.search(pdf_href) or CATALOG_CODE_RE.search(hwp_href)
+            code_match = CATALOG_CODE_RE.search(pdf_href)
             catalog_code = code_match.group(1) if code_match else ""
             cover_url = COVER_URL_TMPL.format(code=catalog_code) if catalog_code else DEFAULT_COVER
             cover_large_url = COVER_LARGE_URL_TMPL.format(code=catalog_code) if catalog_code else ""
@@ -166,12 +162,7 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             # 다운로드 링크가 있으면 PDF를 우선 열고, 없으면 상세 페이지로 이동합니다.
             link = pdf_url or detail_url
 
-            publisher_bits = []
-            if catalog_code:
-                publisher_bits.append(f"No.{catalog_code}")
-            if hwp_url:
-                publisher_bits.append("HWP 있음")
-            publisher = " · ".join(publisher_bits) if publisher_bits else "직지 프로젝트"
+            publisher = f"No.{catalog_code}" if catalog_code else "직지 프로젝트"
 
             items.append(
                 {
