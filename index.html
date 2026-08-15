@@ -1,4 +1,16 @@
 <div class="jf-wrap">
+  <div class="jf-notice">
+    <i class="fa-solid fa-circle-info"></i>
+    <span>
+      이 플러그인은 <strong>sf.jikji.org</strong>를 기본 제공/추천하지 않습니다. 카드 클릭 시 뜨는
+      <strong>앱 내 미리보기</strong>와 표지 위 <strong>⬇ 라이브러리로 가져오기</strong> 버튼을 쓰려면
+      먼저 <strong>설정 &gt; 외부 도메인</strong> 탭에서 <code>sf.jikji.org</code>(또는
+      <code>*.jikji.org</code>)를 화이트리스트에 등록해주세요. 미리보기는 응답 크기 15MB 제한이 있어
+      큰 파일은 <i class="fa-solid fa-up-right-from-square"></i> 버튼으로 새 탭에서 여는 걸 권장합니다.
+      등록/이용에 대한 책임은 사용자 본인에게 있습니다.
+    </span>
+  </div>
+
   <div class="jf-topbar">
     <div class="jf-title-group">
       <span class="jf-title-icon"><i class="fa-solid fa-rocket"></i></span>
@@ -27,6 +39,16 @@
     />
     <button class="jf-search-btn" id="jf-search-btn">검색</button>
   </div>
+
+  <div class="jf-importbar">
+    <i class="fa-solid fa-download jf-import-icon"></i>
+    <span class="jf-import-label">가져올 라이브러리</span>
+    <select id="jf-library-select" class="jf-library-select">
+      <option value="">라이브러리를 선택하세요...</option>
+    </select>
+    <span class="jf-import-hint">카드를 클릭하면 앱 내 미리보기, 표지 위 <i class="fa-solid fa-download"></i> 버튼은 선택한 라이브러리로 가져오기입니다.</span>
+  </div>
+  <div class="jf-import-status" id="jf-import-status"></div>
 
   <div class="jf-status" id="jf-status">불러오는 중...</div>
 

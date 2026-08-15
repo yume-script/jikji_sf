@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-직지 프로젝트 SF (sf.jikji.org) 목록을 대시보드 위젯 카드로 보여주는 플러그인.
+직지 프로젝트 SF (sf.jikji.org) 목록을 대시보드 위젯/카테고리 풀페이지로 보여주는 플러그인.
 
 - 원본 사이트: https://sf.jikji.org/book/listview.html (1999년 제작된
   구형 프레임셋 사이트, EUC-KR 인코딩, 고정된 정적 목록)
-- 검색/메타데이터 적용 기능은 지원하지 않는 "대시보드 전용" 플러그인입니다.
+- 검색/메타데이터 적용 기능은 지원하지 않는 "대시보드/카테고리 전용" 플러그인입니다.
 - 매 요청마다 원본 사이트를 긁지 않도록 메모리 캐시(기본 6시간)를 둡니다.
+- 풀페이지 뷰(index.html/script.js)에서 코어 제공 웹뷰/다운로드 API
+  (window.BookOasisPlugin.downloadToLibrary, plugin_README.md §10)를 사용해
+  PDF를 사용자가 지정한 라이브러리로 바로 가져올 수 있습니다. 이 기능을 쓰려면
+  사용자가 [설정 > 외부 도메인] 탭에서 sf.jikji.org를 먼저 화이트리스트에
+  등록해야 합니다 (플러그인이 임의로 등록/우회할 수 없음).
 """
 
 import re
@@ -44,17 +49,6 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
     id = "jikji_sf"
     name = "직지 프로젝트 SF 목록"
     is_searchable = False
-  
-    update_manifest = {
-        "enabled": True,
-        "provider": "github-raw",
-        "raw_base_url": "https://raw.githubusercontent.com/yume-script/jikji_sf/refs/heads/main/",
-        "files": ["README.md","VERSION","__init__.py","index.html","jikji_sf.py","requirements.txt","script.js","style.css"],
-        "version_file": "VERSION",
-        "version_key": "plugin version",
-        "show_sample_update_button": True,
-    }
-
     config_schema = [
         {
             "key": "CACHE_HOURS",

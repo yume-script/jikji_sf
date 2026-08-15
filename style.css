@@ -8,6 +8,32 @@
   color: var(--app-text-primary, #f8fafc);
 }
 
+.jf-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(168, 85, 247, 0.08);
+  border: 1px solid rgba(168, 85, 247, 0.25);
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  font-size: 0.82rem;
+  color: var(--app-text-secondary, #cbd5e1);
+  line-height: 1.5;
+}
+
+.jf-notice i {
+  color: var(--app-accent, #a855f7);
+  margin-top: 2px;
+}
+
+.jf-notice code {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  font-size: 0.8em;
+}
+
 .jf-topbar {
   display: flex;
   align-items: center;
@@ -119,6 +145,51 @@
   background: var(--app-accent-hover, #c084fc);
 }
 
+.jf-importbar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 9px 14px;
+  margin-bottom: 6px;
+  background: var(--app-bg-card, rgba(30, 41, 59, 0.5));
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.1));
+  border-radius: 10px;
+}
+
+.jf-import-icon {
+  color: var(--app-accent, #a855f7);
+}
+
+.jf-import-label {
+  font-size: 0.82rem;
+  color: var(--app-text-secondary, #cbd5e1);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.jf-library-select {
+  background: var(--app-input-bg, rgba(15, 23, 42, 0.6));
+  border: 1px solid var(--app-border, rgba(255, 255, 255, 0.1));
+  border-radius: 8px;
+  color: var(--app-text-primary, #f8fafc);
+  font-size: 0.82rem;
+  padding: 5px 8px;
+  max-width: 220px;
+}
+
+.jf-import-hint {
+  font-size: 0.75rem;
+  color: var(--app-text-muted, #94a3b8);
+}
+
+.jf-import-status {
+  min-height: 1.1em;
+  font-size: 0.8rem;
+  color: var(--app-text-secondary, #cbd5e1);
+  margin: 6px 2px 14px;
+}
+
 .jf-status {
   padding: 40px 0;
   text-align: center;
@@ -221,6 +292,60 @@
   padding: 0.15rem 0.4rem;
   border-radius: 4px;
   border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.jf-download-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.jf-download-btn:hover {
+  opacity: 1;
+  background: var(--app-accent, #a855f7);
+  border-color: var(--app-accent, #a855f7);
+}
+
+.jf-newtab-btn {
+  position: absolute;
+  bottom: 8px;
+  right: 44px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 23, 42, 0.85);
+  color: #fff;
+  font-size: 0.75rem;
+  cursor: pointer;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+.jf-newtab-btn:hover {
+  opacity: 1;
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.jf-download-btn:disabled {
+  cursor: default;
+  opacity: 0.7;
 }
 
 .jf-info {
