@@ -44,6 +44,17 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
     id = "jikji_sf"
     name = "직지 프로젝트 SF 목록"
     is_searchable = False
+  
+    update_manifest = {
+        "enabled": True,
+        "provider": "github-raw",
+        "raw_base_url": "https://raw.githubusercontent.com/yume-script/jikji_sf/refs/heads/main/",
+        "files": ["README.md","VERSION","__init__.py","index.html","jikji_sf.py","requirements.txt","script.js","style.css"],
+        "version_file": "VERSION",
+        "version_key": "plugin version",
+        "show_sample_update_button": True,
+    }
+
     config_schema = [
         {
             "key": "CACHE_HOURS",
