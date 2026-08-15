@@ -11,12 +11,19 @@
   PDF를 사용자가 지정한 라이브러리로 바로 가져올 수 있습니다. 이 기능을 쓰려면
   사용자가 [설정 > 외부 도메인] 탭에서 sf.jikji.org를 먼저 화이트리스트에
   등록해야 합니다 (플러그인이 임의로 등록/우회할 수 없음).
+- 네트워크 호출은 외부 패키지 `requests` 대신 파이썬 표준 라이브러리인
+  urllib.request만 사용합니다. 코어 requirements.txt에는 beautifulsoup4는
+  포함되어 있지만 requests는 빠져있어(services/metadata_factory.py가 코어
+  제공으로 "가정"만 할 뿐 실제로는 설치돼 있지 않을 수 있음) 환경에 따라
+  import 자체가 실패할 수 있기 때문입니다. urllib은 표준 라이브러리라 별도
+  설치 없이 항상 사용 가능합니다.
 """
 
 import re
 import time
+import urllib.request
+import urllib.error
 
-import requests
 from bs4 import BeautifulSoup
 
 from plugins.metadata.base import BaseMetadataProvider
@@ -94,6 +101,36 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             hours = 6.0
         return max(0.5, hours)
 
+    def _download_listview_html(self):
+        """urllib(표준 라이브러리)만으로 목록 페이지를 내려받아 EUC-KR로 디코딩합니다."""
+        req = urllib.request.Request(
+            LISTVIEW_URL,
+            headers={
+                # 일부 오래된 사이트는 기본 User-Agent(Python-urllib/x.y)를 차단합니다.
+                "User-Agent": (
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/124.0.0.0 Safari/537.36"
+                )
+            },
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=15) as resp:
+                raw = resp.read()
+        except urllib.error.HTTPError as exc:
+            raise RuntimeError(f"HTTP {exc.code} {exc.reason}") from exc
+        except urllib.error.URLError as exc:
+            raise RuntimeError(f"연결 실패: {exc.reason}") from exc
+
+        # 원본 페이지는 EUC-KR 인코딩입니다. euc-kr 디코딩이 실패하면 cp949로 재시도합니다
+        # (거의 상위호환이라 EUC-KR에 없는 일부 확장 한글 조합만 다를 수 있음).
+        for enc in ("euc-kr", "cp949", "utf-8"):
+            try:
+                return raw.decode(enc)
+            except UnicodeDecodeError:
+                continue
+        return raw.decode("euc-kr", errors="replace")
+
     def _fetch_items(self, db_type, limit=200):
         cache_ttl = self._cache_hours(db_type) * 3600
         now = time.time()
@@ -102,11 +139,7 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             return {"success": True, "items": self._cache_items[: max(1, int(limit or 200))]}
 
         try:
-            resp = requests.get(LISTVIEW_URL, timeout=15)
-            resp.raise_for_status()
-            # 원본 페이지는 EUC-KR 인코딩입니다.
-            resp.encoding = resp.apparent_encoding or "euc-kr"
-            html = resp.text
+            html = self._download_listview_html()
         except Exception as exc:  # noqa: BLE001
             # 사이트 접속 실패 시, 이전에 캐시된 목록이 있으면 그거라도 반환
             if self._cache_items:
