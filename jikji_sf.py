@@ -72,13 +72,13 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
             "default": 6,
         },
     ]
-    dashboard_widget = {
-        "title": "직지 프로젝트 SF",
-        "subtitle": "아이디어 회관 SF 총서 전자책 목록 (sf.jikji.org)",
-        "provider": "직지 프로젝트",
-        "icon": "fa-solid fa-rocket",
-        "limit": 8,
-    }
+    #dashboard_widget = {
+    #    "title": "직지 프로젝트 SF",
+    #    "subtitle": "아이디어 회관 SF 총서 전자책 목록 (sf.jikji.org)",
+    #    "provider": "직지 프로젝트",
+    #    "icon": "fa-solid fa-rocket",
+    #    "limit": 8,
+    #}
     # 코어 좌측/상단 "카테고리" 내비게이션에 별도 메뉴로 노출되는 풀페이지 탭.
     # index.html/style.css/script.js 번들이 있으면 그 커스텀 UI로 렌더링되고,
     # 데이터는 get_dashboard_data()를 그대로 재사용합니다.
