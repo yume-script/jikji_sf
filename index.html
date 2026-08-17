@@ -1,83 +1,83 @@
 <div class="jf-wrap">
-  <div class="jf-notice">
-    <i class="fa-solid fa-circle-info"></i>
-    <span>
-      이 플러그인은 <strong>sf.jikji.org</strong>를 기본 제공/추천하지 않습니다. 카드 클릭 시 뜨는
-      <strong>앱 내 미리보기</strong>는 브라우저가 원본 사이트에 직접 접속해 페이지 안에서 바로 보여주는
-      방식이라 별도 설정이 필요 없습니다. 다만 표지 위 <strong>⬇ 라이브러리로 가져오기</strong> 버튼은
-      서버가 대신 파일을 내려받는 기능이라, 먼저 <strong>설정 &gt; 외부 도메인</strong> 탭에서
-      <code>sf.jikji.org</code>(또는 <code>*.jikji.org</code>)를 화이트리스트에 등록해야 동작합니다.
-      미리보기 화면이 비어 보이면 사이트가 임베드를 차단한 경우이니
-      <i class="fa-solid fa-up-right-from-square"></i> 버튼으로 새 탭에서 열어주세요.
-      이용에 대한 책임은 사용자 본인에게 있습니다.
-    </span>
-  </div>
-
-  <div class="jf-topbar">
-    <div class="jf-title-group">
-      <span class="jf-title-icon"><i class="fa-solid fa-rocket"></i></span>
-      <h2 class="jf-title">직지 프로젝트 SF</h2>
-      <span class="jf-count" id="jf-count">(불러오는 중…)</span>
+  <!-- 목록(그리드) 화면: 리더가 열리면 통째로 숨겨집니다. -->
+  <div id="jf-browse-view">
+    <div class="jf-notice">
+      <i class="fa-solid fa-circle-info"></i>
+      <span>
+        이 플러그인은 <strong>sf.jikji.org</strong>를 기본 제공/추천하지 않습니다. 카드 클릭 시 여는
+        <strong>페이지 내 읽기</strong>는 브라우저가 원본 사이트에 직접 접속해 보여주는 방식이라 별도
+        설정이 필요 없습니다. 다만 표지 위 <strong>⬇ 라이브러리로 가져오기</strong> 버튼은 서버가 대신
+        파일을 내려받는 기능이라, 먼저 <strong>설정 &gt; 외부 도메인</strong> 탭에서
+        <code>sf.jikji.org</code>(또는 <code>*.jikji.org</code>)를 화이트리스트에 등록해야 동작합니다.
+        읽기 화면이 비어 보이면 사이트가 임베드를 차단한 경우이니
+        <i class="fa-solid fa-up-right-from-square"></i> 버튼으로 새 탭에서 열어주세요.
+        이용에 대한 책임은 사용자 본인에게 있습니다.
+      </span>
     </div>
-    <div class="jf-topbar-right">
-      <button class="jf-pill-btn" id="jf-sort-btn" title="정렬 방식 전환">
-        <i class="fa-solid fa-arrow-down-a-z"></i>
-        <span id="jf-sort-label">번호순</span>
-      </button>
-      <button class="jf-pill-btn" id="jf-refresh-btn" title="새로고침">
-        <i class="fa-solid fa-rotate"></i>
-      </button>
+
+    <div class="jf-topbar">
+      <div class="jf-title-group">
+        <span class="jf-title-icon"><i class="fa-solid fa-rocket"></i></span>
+        <h2 class="jf-title">직지 프로젝트 SF</h2>
+        <span class="jf-count" id="jf-count">(불러오는 중…)</span>
+      </div>
+      <div class="jf-topbar-right">
+        <button class="jf-pill-btn" id="jf-sort-btn" title="정렬 방식 전환">
+          <i class="fa-solid fa-arrow-down-a-z"></i>
+          <span id="jf-sort-label">번호순</span>
+        </button>
+        <button class="jf-pill-btn" id="jf-refresh-btn" title="새로고침">
+          <i class="fa-solid fa-rotate"></i>
+        </button>
+      </div>
     </div>
+
+    <div class="jf-searchbar">
+      <i class="fa-solid fa-magnifying-glass jf-search-icon"></i>
+      <input
+        type="text"
+        id="jf-search-input"
+        class="jf-search-input"
+        placeholder="제목 · 저자명 검색 (단축키: Alt + `)"
+        autocomplete="off"
+      />
+      <button class="jf-search-btn" id="jf-search-btn">검색</button>
+    </div>
+
+    <div class="jf-importbar">
+      <i class="fa-solid fa-download jf-import-icon"></i>
+      <span class="jf-import-label">가져올 라이브러리</span>
+      <select id="jf-library-select" class="jf-library-select">
+        <option value="">라이브러리를 선택하세요...</option>
+      </select>
+      <span class="jf-import-hint">카드를 클릭하면 페이지 안에서 바로 보기, 표지 위 <i class="fa-solid fa-download"></i> 버튼은 선택한 라이브러리로 가져오기입니다.</span>
+    </div>
+    <div class="jf-import-status" id="jf-import-status"></div>
+
+    <div class="jf-status" id="jf-status">불러오는 중...</div>
+
+    <div class="jf-grid" id="jf-grid"></div>
   </div>
 
-  <div class="jf-searchbar">
-    <i class="fa-solid fa-magnifying-glass jf-search-icon"></i>
-    <input
-      type="text"
-      id="jf-search-input"
-      class="jf-search-input"
-      placeholder="제목 · 저자명 검색 (단축키: Alt + `)"
-      autocomplete="off"
-    />
-    <button class="jf-search-btn" id="jf-search-btn">검색</button>
-  </div>
-
-  <div class="jf-importbar">
-    <i class="fa-solid fa-download jf-import-icon"></i>
-    <span class="jf-import-label">가져올 라이브러리</span>
-    <select id="jf-library-select" class="jf-library-select">
-      <option value="">라이브러리를 선택하세요...</option>
-    </select>
-    <span class="jf-import-hint">카드를 클릭하면 페이지 안에서 바로 보기, 표지 위 <i class="fa-solid fa-download"></i> 버튼은 선택한 라이브러리로 가져오기입니다.</span>
-  </div>
-  <div class="jf-import-status" id="jf-import-status"></div>
-
-  <div class="jf-status" id="jf-status">불러오는 중...</div>
-
-  <div class="jf-grid" id="jf-grid"></div>
-
-  <!-- 자체 인라인 뷰어: 새 창/탭 없이 페이지 안에서 바로 PDF를 보여주는 오버레이.
+  <!-- 리더 화면: 오버레이가 아니라 그리드 자리를 그대로 대체합니다.
        코어 웹뷰 API(openWebview)를 거치지 않고 브라우저가 원본 URL에 직접 접속하므로
-       화이트리스트 등록이나 서버 requests 모듈과 무관하게 항상 동작합니다.
-       크롬 등 브라우저 내장 PDF 뷰어가 자체 툴바를 렌더링하므로, 우리 쪽 타이틀바는
-       없애고 PDF 위에 떠 있는 최소한의 버튼만 남겨 "창 안의 창"처럼 보이지 않게 합니다. -->
-  <div class="jf-viewer-overlay" id="jf-viewer-overlay" hidden>
-    <div class="jf-viewer-panel">
+       화이트리스트 등록이나 서버 requests 모듈과 무관하게 항상 동작합니다. -->
+  <div id="jf-reader-view" class="jf-reader-view" hidden>
+    <div class="jf-reader-topbar">
+      <button type="button" id="jf-reader-back" class="jf-pill-btn jf-reader-back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>이전으로</span>
+      </button>
+      <span class="jf-reader-title" id="jf-reader-title"></span>
       <a
         href="#"
-        id="jf-viewer-newtab"
-        class="jf-viewer-float-btn jf-viewer-float-newtab"
+        id="jf-reader-newtab"
+        class="jf-pill-btn"
         target="_blank"
         rel="noopener noreferrer"
         title="새 탭에서 열기"
       ><i class="fa-solid fa-up-right-from-square"></i></a>
-      <button
-        type="button"
-        id="jf-viewer-close"
-        class="jf-viewer-float-btn jf-viewer-float-close"
-        title="닫기"
-      ><i class="fa-solid fa-xmark"></i></button>
-      <iframe id="jf-viewer-frame" class="jf-viewer-frame" src="" title="책 미리보기"></iframe>
     </div>
+    <iframe id="jf-reader-frame" class="jf-reader-frame" src="" title="책 미리보기"></iframe>
   </div>
 </div>

@@ -89,30 +89,37 @@
     }
   }
 
-  // 새 창/탭 없이 페이지 안에서 바로 보기 (자체 iframe 오버레이).
+  // 새 창/탭이나 오버레이 없이, 그리드 화면 자리를 리더 화면으로 바꿔치기합니다.
   // 코어 openWebview()는 서버가 대신 fetch하는 방식이라 화이트리스트/requests 설치가
   // 필요하지만, 이 방식은 브라우저가 원본 URL에 직접 접속하므로 그런 제약이 없습니다.
   function openInlineViewer(item) {
     if (!item.link) return;
-    const overlay = container.querySelector('#jf-viewer-overlay');
-    const frame = container.querySelector('#jf-viewer-frame');
-    const newTabLink = container.querySelector('#jf-viewer-newtab');
-    if (!overlay || !frame) {
+    const browseView = container.querySelector('#jf-browse-view');
+    const readerView = container.querySelector('#jf-reader-view');
+    const frame = container.querySelector('#jf-reader-frame');
+    const titleEl = container.querySelector('#jf-reader-title');
+    const newTabLink = container.querySelector('#jf-reader-newtab');
+    if (!browseView || !readerView || !frame) {
       // 혹시 마크업이 없는 예외 상황이면 새 탭으로라도 열어줍니다.
       window.open(item.link, '_blank', 'noopener,noreferrer');
       return;
     }
     frame.src = item.link;
     frame.title = item.title || '책 미리보기';
+    if (titleEl) titleEl.textContent = item.title || '';
     if (newTabLink) newTabLink.href = item.link;
-    overlay.hidden = false;
+    browseView.hidden = true;
+    readerView.hidden = false;
+    readerView.scrollIntoView({ block: 'start' });
   }
 
   function closeInlineViewer() {
-    const overlay = container.querySelector('#jf-viewer-overlay');
-    const frame = container.querySelector('#jf-viewer-frame');
-    if (overlay) overlay.hidden = true;
-    // 재생/로딩 중단을 위해 src를 비웁니다.
+    const browseView = container.querySelector('#jf-browse-view');
+    const readerView = container.querySelector('#jf-reader-view');
+    const frame = container.querySelector('#jf-reader-frame');
+    if (readerView) readerView.hidden = true;
+    if (browseView) browseView.hidden = false;
+    // 로딩/렌더링 중단을 위해 src를 비웁니다.
     if (frame) frame.src = 'about:blank';
   }
 
@@ -371,19 +378,14 @@
     refreshBtn.addEventListener('click', fetchList);
   }
 
-  // 인라인 뷰어 닫기: X 버튼 / 오버레이 바깥 클릭 / ESC 키
-  const viewerOverlay = container.querySelector('#jf-viewer-overlay');
-  const viewerCloseBtn = container.querySelector('#jf-viewer-close');
-  if (viewerCloseBtn) {
-    viewerCloseBtn.addEventListener('click', closeInlineViewer);
-  }
-  if (viewerOverlay) {
-    viewerOverlay.addEventListener('click', (event) => {
-      if (event.target === viewerOverlay) closeInlineViewer();
-    });
+  // 리더 화면 닫기(이전으로): 뒤로가기 버튼 / ESC 키
+  const readerView = container.querySelector('#jf-reader-view');
+  const readerBackBtn = container.querySelector('#jf-reader-back');
+  if (readerBackBtn) {
+    readerBackBtn.addEventListener('click', closeInlineViewer);
   }
   document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape' && viewerOverlay && !viewerOverlay.hidden) {
+    if (event.key === 'Escape' && readerView && !readerView.hidden) {
       closeInlineViewer();
     }
   });
