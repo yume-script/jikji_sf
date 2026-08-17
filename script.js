@@ -96,7 +96,6 @@
     if (!item.link) return;
     const overlay = container.querySelector('#jf-viewer-overlay');
     const frame = container.querySelector('#jf-viewer-frame');
-    const titleEl = container.querySelector('#jf-viewer-title');
     const newTabLink = container.querySelector('#jf-viewer-newtab');
     if (!overlay || !frame) {
       // 혹시 마크업이 없는 예외 상황이면 새 탭으로라도 열어줍니다.
@@ -104,7 +103,7 @@
       return;
     }
     frame.src = item.link;
-    if (titleEl) titleEl.textContent = item.title || '';
+    frame.title = item.title || '책 미리보기';
     if (newTabLink) newTabLink.href = item.link;
     overlay.hidden = false;
   }

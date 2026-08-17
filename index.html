@@ -58,25 +58,25 @@
 
   <!-- 자체 인라인 뷰어: 새 창/탭 없이 페이지 안에서 바로 PDF를 보여주는 오버레이.
        코어 웹뷰 API(openWebview)를 거치지 않고 브라우저가 원본 URL에 직접 접속하므로
-       화이트리스트 등록이나 서버 requests 모듈과 무관하게 항상 동작합니다. -->
+       화이트리스트 등록이나 서버 requests 모듈과 무관하게 항상 동작합니다.
+       크롬 등 브라우저 내장 PDF 뷰어가 자체 툴바를 렌더링하므로, 우리 쪽 타이틀바는
+       없애고 PDF 위에 떠 있는 최소한의 버튼만 남겨 "창 안의 창"처럼 보이지 않게 합니다. -->
   <div class="jf-viewer-overlay" id="jf-viewer-overlay" hidden>
     <div class="jf-viewer-panel">
-      <div class="jf-viewer-header">
-        <span class="jf-viewer-title" id="jf-viewer-title"></span>
-        <div class="jf-viewer-actions">
-          <a
-            href="#"
-            id="jf-viewer-newtab"
-            class="jf-viewer-action-btn"
-            target="_blank"
-            rel="noopener noreferrer"
-            title="새 탭에서 열기"
-          ><i class="fa-solid fa-up-right-from-square"></i></a>
-          <button type="button" id="jf-viewer-close" class="jf-viewer-action-btn" title="닫기">
-            <i class="fa-solid fa-xmark"></i>
-          </button>
-        </div>
-      </div>
+      <a
+        href="#"
+        id="jf-viewer-newtab"
+        class="jf-viewer-float-btn jf-viewer-float-newtab"
+        target="_blank"
+        rel="noopener noreferrer"
+        title="새 탭에서 열기"
+      ><i class="fa-solid fa-up-right-from-square"></i></a>
+      <button
+        type="button"
+        id="jf-viewer-close"
+        class="jf-viewer-float-btn jf-viewer-float-close"
+        title="닫기"
+      ><i class="fa-solid fa-xmark"></i></button>
       <iframe id="jf-viewer-frame" class="jf-viewer-frame" src="" title="책 미리보기"></iframe>
     </div>
   </div>
