@@ -14,25 +14,28 @@
     </span>
   </div>
 
+  <!-- 타이틀바: 그리드/리더 어느 화면에서도 항상 보이도록 wrap 최상단에 둡니다
+       (안내 배너와 동일한 이유). 정렬/새로고침 버튼은 리더 중에도 눌러도 무해하므로
+       그대로 둡니다. -->
+  <div class="jf-topbar">
+    <div class="jf-title-group">
+      <span class="jf-title-icon"><i class="fa-solid fa-rocket"></i></span>
+      <h2 class="jf-title">직지 프로젝트 SF</h2>
+      <span class="jf-count" id="jf-count">(불러오는 중…)</span>
+    </div>
+    <div class="jf-topbar-right">
+      <button class="jf-pill-btn" id="jf-sort-btn" title="정렬 방식 전환">
+        <i class="fa-solid fa-arrow-down-a-z"></i>
+        <span id="jf-sort-label">번호순</span>
+      </button>
+      <button class="jf-pill-btn" id="jf-refresh-btn" title="새로고침">
+        <i class="fa-solid fa-rotate"></i>
+      </button>
+    </div>
+  </div>
+
   <!-- 목록(그리드) 화면: 리더가 열리면 통째로 숨겨집니다. -->
   <div id="jf-browse-view">
-    <div class="jf-topbar">
-      <div class="jf-title-group">
-        <span class="jf-title-icon"><i class="fa-solid fa-rocket"></i></span>
-        <h2 class="jf-title">직지 프로젝트 SF</h2>
-        <span class="jf-count" id="jf-count">(불러오는 중…)</span>
-      </div>
-      <div class="jf-topbar-right">
-        <button class="jf-pill-btn" id="jf-sort-btn" title="정렬 방식 전환">
-          <i class="fa-solid fa-arrow-down-a-z"></i>
-          <span id="jf-sort-label">번호순</span>
-        </button>
-        <button class="jf-pill-btn" id="jf-refresh-btn" title="새로고침">
-          <i class="fa-solid fa-rotate"></i>
-        </button>
-      </div>
-    </div>
-
     <div class="jf-searchbar">
       <i class="fa-solid fa-magnifying-glass jf-search-icon"></i>
       <input
