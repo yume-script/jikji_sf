@@ -6,6 +6,11 @@
 .jf-wrap {
   padding: 20px 24px 32px;
   color: var(--app-text-primary, #f8fafc);
+  display: flex;
+  flex-direction: column;
+  /* 리더 화면이 뷰포트를 최대한 채우면서도 배너 높이만큼은 자연스럽게 밀리도록
+     wrap 자체를 flex 컨테이너로 두고, 리더 뷰가 남은 공간을 가져가게 합니다. */
+  min-height: calc(100vh - 80px);
 }
 
 .jf-notice {
@@ -32,6 +37,13 @@
   padding: 0.1rem 0.35rem;
   border-radius: 4px;
   font-size: 0.8em;
+}
+
+/* 안내 배너를 제외한 나머지 wrap 공간은 그리드 화면이 자연스럽게 채웁니다. */
+#jf-browse-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 .jf-topbar {
@@ -390,9 +402,9 @@
 .jf-reader-view {
   display: flex;
   flex-direction: column;
-  /* jf-wrap의 상하 패딩(20px+32px)을 감안해 뷰포트 높이에 맞춰 최대한 채웁니다. */
-  height: calc(100vh - 100px);
-  min-height: 480px;
+  /* jf-wrap이 flex 컨테이너이므로, 안내 배너를 제외한 남은 세로 공간을 그대로 채웁니다. */
+  flex: 1;
+  min-height: 420px;
 }
 
 .jf-reader-view[hidden] {
