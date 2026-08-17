@@ -86,6 +86,7 @@ class JikjiSFMetadataProvider(BaseMetadataProvider):
         "title": "직지 프로젝트 SF",
         "icon": "fa-solid fa-rocket",
         "order": 91,
+        "sessions": ["general"],      
     }
 
     _cache_items = None
