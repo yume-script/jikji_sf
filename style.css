@@ -46,6 +46,12 @@
   flex: 1;
 }
 
+/* display:flex가 [hidden]의 기본 display:none보다 우선 적용되는 걸 막기 위한
+   명시적 오버라이드 (이게 없으면 JS로 hidden을 줘도 그리드가 계속 보임). */
+#jf-browse-view[hidden] {
+  display: none;
+}
+
 .jf-topbar {
   display: flex;
   align-items: center;
