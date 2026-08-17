@@ -89,14 +89,32 @@
     }
   }
 
-  async function handlePreviewClick(item) {
+  // 새 창/탭 없이 페이지 안에서 바로 보기 (자체 iframe 오버레이).
+  // 코어 openWebview()는 서버가 대신 fetch하는 방식이라 화이트리스트/requests 설치가
+  // 필요하지만, 이 방식은 브라우저가 원본 URL에 직접 접속하므로 그런 제약이 없습니다.
+  function openInlineViewer(item) {
     if (!item.link) return;
-    if (!window.BookOasisPlugin || typeof window.BookOasisPlugin.openWebview !== 'function') {
+    const overlay = container.querySelector('#jf-viewer-overlay');
+    const frame = container.querySelector('#jf-viewer-frame');
+    const titleEl = container.querySelector('#jf-viewer-title');
+    const newTabLink = container.querySelector('#jf-viewer-newtab');
+    if (!overlay || !frame) {
+      // 혹시 마크업이 없는 예외 상황이면 새 탭으로라도 열어줍니다.
       window.open(item.link, '_blank', 'noopener,noreferrer');
       return;
     }
-    // openWebview 내부에서 화이트리스트 미등록/응답 15MB 초과 등은 토스트로 안내됨.
-    window.BookOasisPlugin.openWebview(item.link);
+    frame.src = item.link;
+    if (titleEl) titleEl.textContent = item.title || '';
+    if (newTabLink) newTabLink.href = item.link;
+    overlay.hidden = false;
+  }
+
+  function closeInlineViewer() {
+    const overlay = container.querySelector('#jf-viewer-overlay');
+    const frame = container.querySelector('#jf-viewer-frame');
+    if (overlay) overlay.hidden = true;
+    // 재생/로딩 중단을 위해 src를 비웁니다.
+    if (frame) frame.src = 'about:blank';
   }
 
   async function handleDownloadClick(item, btn) {
@@ -166,7 +184,7 @@
       card.rel = 'noopener noreferrer';
       card.addEventListener('click', (event) => {
         event.preventDefault();
-        handlePreviewClick(item);
+        openInlineViewer(item);
       });
 
       const [c1, c2] = gradientFor(item.title || '');
@@ -353,6 +371,23 @@
   if (refreshBtn) {
     refreshBtn.addEventListener('click', fetchList);
   }
+
+  // 인라인 뷰어 닫기: X 버튼 / 오버레이 바깥 클릭 / ESC 키
+  const viewerOverlay = container.querySelector('#jf-viewer-overlay');
+  const viewerCloseBtn = container.querySelector('#jf-viewer-close');
+  if (viewerCloseBtn) {
+    viewerCloseBtn.addEventListener('click', closeInlineViewer);
+  }
+  if (viewerOverlay) {
+    viewerOverlay.addEventListener('click', (event) => {
+      if (event.target === viewerOverlay) closeInlineViewer();
+    });
+  }
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && viewerOverlay && !viewerOverlay.hidden) {
+      closeInlineViewer();
+    }
+  });
 
   loadLibraries();
   fetchList();
